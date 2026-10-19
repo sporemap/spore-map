@@ -1,0 +1,49 @@
+# Builds the demo page and publishes dist/ to GitHub Pages on every push to main.
+# Enable Pages for the repository first: Settings → Pages → Source: "GitHub Actions".
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      # The API host the page calls: the repository's Actions variable VITE_API_BASE, or
+      # https://sporepad.com. (An unset variable must not reach the build as an empty string:
+      # VITE_API_BASE="" means "same-origin /api", which GitHub Pages cannot serve.)
+      - run: npm run build
+        env:
+          VITE_API_BASE: ${{ vars.VITE_API_BASE || 'https://sporepad.com' }}
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
