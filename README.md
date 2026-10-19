@@ -2,7 +2,7 @@
 
 The whole pump.fun custom-pair ecosystem as one live bubble map. Every cluster is a **root coin** (a pump.fun coin that other coins were paired under) and every bubble inside it is a coin quoted in that root or in one of its descendants. Bubble area is the value a coin's children have locked in their curves (or its market cap), links run child → parent, and dots drift along them the way buys do: every buy of a child buys its parent first. Coins launched on [Spore](https://sporepad.com) carry a lime ring.
 
-**Live:** https://sporepad.com/map · **Data:** the public Spore API (documented below) · **Licence:** MIT
+**Live:** https://sporepad.com/map · **This repo, deployed:** https://sporemap.github.io/spore-map/ · **Data:** the public Spore API (documented below) · **Licence:** MIT
 
 ![The Spore ecosystem map: 2,200 root clusters and 16,000 coins](docs/map.png)
 
@@ -36,7 +36,7 @@ VITE_API_BASE= npm run build                        # same-origin /api (npm run 
 
 ### Cross-origin note
 
-The Spore API sends CORS headers only to origins on its allowlist, so a build served from another origin (GitHub Pages, your own host) can only reach `https://sporepad.com/api/*` once that origin is allowed (an `Access-Control-Allow-Origin` for your origin on `/api/map`, `/api/stats`, `/api/coin/*` and the `/api/events` stream; the browser reports `MissingAllowOriginHeader` until then). Until then run the page behind a proxy that forwards `/api` (as the dev server does) and build with `VITE_API_BASE=`, or ask for your origin to be allowed via [@Sporemap](https://x.com/Sporemap). Image loads (`/api/img`) are plain `<img>`/canvas loads and work from anywhere.
+The Spore API sends CORS headers only to origins on its allowlist. `https://sporemap.github.io` is allowed (that is what the deployed demo uses); a build served from your own host can reach `https://sporepad.com/api/*` only once your origin is allowed too — ask on X (@Sporemap) — or proxy the API through your own server, as `vite.config.ts` does in development.
 
 ### Deploying to GitHub Pages
 
